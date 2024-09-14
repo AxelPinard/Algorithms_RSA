@@ -11,7 +11,7 @@ class my_class():
             return self.gcd(b, a%b)
     
     def extended_gcd(self, a=1, b=1):
-        """Returns the gcd(a,b) and x, y where a*x + b*y = gcd(a,b).(Euclid's Extended Algorithm)"""
+        """Returns the gcd(a,b) and x, y where a*x + b*y = gcd(a,b). (Euclid's Extended Algorithm)"""
         if b == 0:
             return a, 1, 0
         gcd, x1, y1 = self.extended_gcd(b, a%b)
@@ -30,19 +30,35 @@ class my_class():
             i += 1
         return True
 
-    def generate_prime(self,low = 1000, high = 9999):
-        """Generates a random prime number between low and high values."""
-        while True:
-            num = random.randint(low, high)
-            if self.is_prime(num):
-                return num
+    def fermatPrime(self):
+        """Performs Fermat Primality Test."""
+        k = 5  
+        p = random.randint(1000, 9999)
+        pseudo_prime = False
+        
+        while not pseudo_prime:
+            for i in range(k):
+                j = random.randint(2, p - 1)
+                if pow(j, p - 1, p) != 1:
+                    p = random.randint(1000, 9999)
+                    break 
+            else:
+                pseudo_prime = True
+                
+            if self.is_prime(p):
+                return p
+            else:
+                pseudo_prime = False
 
     def generate_phi(self):
         """Generates phi = (p-1) * (q-1)."""
-        p = self.generate_prime()
-        q = self.generate_prime()
+        p = self.fermatPrime()
+        q = self.fermatPrime()
         phi = (p-1) * (q-1)
+        self.n = p * q
+        print(self.n)
         return phi
+    
 
     def generate_public_key(self,phi):
         """Generates public key e"""
@@ -62,12 +78,21 @@ class my_class():
         d = x % phi
         return d
 
+    def fastExpo_rec (self, c, d, n):
+        """Fast Modular Exponentiation Recursive Algorithm """
+        if d == 0:
+            return 1 
+        if d%2 == 0:
+            t = self.fastExpo_rec(c, d//2, n)
+            return (t * t) % n 
+        else:
+            t = self.fastExpo_rec(c, d//2, n)
+            return c * (t**2%n) % n
+
+
+
     def __init__(self):
         self.phi = self.generate_phi()
         self.e = self.generate_public_key(self.phi)
         self.d = self.generate_private_key(self.e, self.phi)
    
-
-
-
-
