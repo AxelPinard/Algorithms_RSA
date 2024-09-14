@@ -71,3 +71,91 @@ def generate_keys():
     phi = generate_phi()
     e = generate_public_key(phi)
     d = generate_private_key(e, phi)
+    
+## below this line is Jon --- 
+
+def fastExpo_rec (c, d, n):
+    """Fast Modular Exponentiation Recursive Algorithm """
+    if d == 0:
+        return 1 
+    if d%2 == 0:
+        t = fastExpo_rec(c, d//2, n)
+        return (t * t) % n 
+    else:
+        t = fastExpo_rec(c, d//2, n)
+        return c * (t**2%n) % n
+    
+
+def fermatPrime():
+    p = random.randomint(1000, 9999)    ## using arbitrary numbers here
+    pseudo_prime = False
+    while not pseudo_prime:
+        for i in range(k):              ## HOW DO WE DETERMINE K? Slides say constant integer
+            j = random.randint(2, p)
+            if pow(j, p - 1, p) > 1:
+                p = random.randint(1000, 9999)
+                break 
+        pseudo_prime = True
+    return p 
+
+"""
+FOR RSA KEY GENERATION
+
+Generate two large pseudo primes p and q utilitizing the Fermat's tests algorithm
+Test if p and q are prime 
+
+Yes? ----> Find an e relative prime to (p - 1)(q - 1) utilitizing Euclids gcd algorithm
+Then find the multiplicative inverse of e in Z(p - 1)(q - 1) utilizing Extended Euclid 
+Output: n = pq, e and d
+
+No? ----> back to Fermat's tests and generate more prime numbers
+
+
+AVAILABLE TO PUBLIC
+
+Encryption***
+Input: message M
+Public Key (n, e)
+------>
+Encrypt: C = M^e mod n utilizing fast modular exponentiation algorithm
+in order to get the output, C
+
+LIMITED TO PRIVATE ACCESS
+
+Decryption***
+Input: C 
+Private key (n, d)
+------>
+Decrypt: M = C&d mod n utilizing fast modular exponentiation algorithm
+in order to get the output, M
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
