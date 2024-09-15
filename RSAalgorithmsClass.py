@@ -56,10 +56,8 @@ class my_class():
         q = self.fermatPrime()
         phi = (p-1) * (q-1)
         self.n = p * q
-        print(self.n)
         return phi
     
-
     def generate_public_key(self,phi):
         """Generates public key e"""
         if phi <= 1:
@@ -89,9 +87,8 @@ class my_class():
             t = self.fastExpo_rec(c, d//2, n)
             return c * (t**2%n) % n
 
-
-
     def __init__(self):
+        """Initializes the object and assigns the private/public key"""
         self.phi = self.generate_phi()
         self.e = self.generate_public_key(self.phi)
         self.d = self.generate_private_key(self.e, self.phi)
