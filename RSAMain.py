@@ -30,7 +30,8 @@ while True:
     print("")
 
     #Public User Menu options
-    if userSelection == 1:
+    while userSelection == 1:
+
         print("As a public user, what would you like to do?")
         print(      "1. Send an encrypted message")
         print(      "2. Authenticate a digitial signature")
@@ -41,17 +42,32 @@ while True:
         #Sending an encrypted message
         if userSelection == 1:
             notEncryptedText = input("Enter a message: ")
+            print("")
             notEncryptedText = notEncryptedText.upper()
         
             #loop to Encrypt the message and put in List of Messages
             for x in notEncryptedText:
                 encryptedMessage.append(RSA.fastExpo_rec(ord(x), RSA.e, RSA.n)) 
+
             List_Of_Messages.append(encryptedMessage)
 
             print("Message encrypted and sent.")
-    
+        
+        #Authenticate a digital signature
+        if userSelection == 2:
+            """stuff here"""
+
+        #Exit out of Public User Menu
+        if userSelection == 3:
+            userSelection = 0
+            break
+
+        #Reset UserSelection 
+        userSelection = 1
+            
     #Owner of the keys options
-    if userSelection == 2:
+    while userSelection == 2:
+        
         print("As the owner of the keys, what would you like to do?")
         print(      "1. Decrypt a received message")
         print(      "2. Digitally sign a message")
@@ -67,8 +83,37 @@ while True:
             for x in range(len(List_Of_Messages)):
                 print(str(x+1) + ". (length = " + str(len(List_Of_Messages[x])) + ")")
             userSelection = int(input("Enter your choice: "))
+            print("")
             notEncryptedText = ""
             for x in List_Of_Messages[userSelection-1]:
                 notEncryptedText += chr(RSA.fastExpo_rec(x, RSA.d,RSA.n))
             print("Decrypted Message: " + notEncryptedText)
             print("")
+        
+        #Digitally sign a message
+        if userSelection == 2:
+            """do stuff here"""
+
+        #Shop the keys
+        if userSelection == 3:
+            print("Public key: " + str(RSA.e))
+            print("Private key: " + str(RSA.d))
+            print("")
+
+        #Generate new set of keys
+        if userSelection == 4:
+            """do stuff here"""
+
+        #Exit out of Owner of keys menu
+        if userSelection == 5:
+            userSelection = 0
+            break
+
+        #reset userSelection
+        userSelection = 2
+
+
+
+
+    if userSelection == 3:
+        break
