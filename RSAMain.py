@@ -1,3 +1,4 @@
+from re import L
 import RSAalgorithmsClass
 import random
 
@@ -11,6 +12,7 @@ d = Private key
 
 #Generate Keys
 print("RSA keys have been generated.")
+print("")
 RSA = RSAalgorithmsClass.my_class()
 
 #list to hold all of the encrypted messages
@@ -42,17 +44,8 @@ while True:
         
         #Sending an encrypted message
         if userSelection == 1:
-            notEncryptedText = input("Enter a message: ")
-            print("")
-            notEncryptedText = notEncryptedText.upper()
-        
-            #loop to Encrypt the message and put in List of Messages
-            for x in notEncryptedText:
-                encryptedMessage.append(RSA.fastExpo_rec(ord(x), RSA.e, RSA.n)) 
-
-            List_Of_Messages.append(encryptedMessage)
-
-            print("Message encrypted and sent.")
+            EncryptBool = True
+            RSA.encrypt_decrypt(List_Of_Messages, EncryptBool)
         
         #Authenticate a digital signature
         if userSelection == 2:
@@ -64,7 +57,7 @@ while True:
             notEncryptedText = ""
             for x in List_Of_Sig[userSelection-1]:
                 notEncryptedText += chr(RSA.fastExpo_rec(x, RSA.e,RSA.n))
-            print("Decrypted Message: " + notEncryptedText)
+            print("Signature is valid")
             print("")
 
         #Exit out of Public User Menu
@@ -89,16 +82,8 @@ while True:
 
         #Decrypt a recieved message
         if userSelection == 1:
-            print("The following messages are available:")
-            for x in range(len(List_Of_Messages)):
-                print(str(x+1) + ". (length = " + str(len(List_Of_Messages[x])) + ")")
-            userSelection = int(input("Enter your choice: "))
-            print("")
-            notEncryptedText = ""
-            for x in List_Of_Messages[userSelection-1]:
-                notEncryptedText += chr(RSA.fastExpo_rec(x, RSA.d,RSA.n))
-            print("Decrypted Message: " + notEncryptedText)
-            print("")
+            EncryptBool = False
+            List_Of_Messages = RSA.encrypt_decrypt(List_Of_Messages, EncryptBool)
         
         #Digitally sign a message
         if userSelection == 2:
@@ -122,7 +107,9 @@ while True:
 
         #Generate new set of keys
         if userSelection == 4:
-            """do stuff here"""
+            RSA = RSAalgorithmsClass.my_class()
+            print("New keys have been generated")
+            print("")
 
         #Exit out of Owner of keys menu
         if userSelection == 5:
@@ -131,9 +118,6 @@ while True:
 
         #reset userSelection
         userSelection = 2
-
-
-
 
     if userSelection == 3:
         break

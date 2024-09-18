@@ -87,6 +87,37 @@ class my_class():
             t = self.fastExpo_rec(c, d//2, n)
             return c * (t**2%n) % n
 
+    def encrypt_decrypt(self,List_Of_Messages, E_Or_D):
+        if E_Or_D == True:
+            notEncryptedText = input("Enter a message: ")
+            print("")
+            notEncryptedText = notEncryptedText.upper()
+            encryptedMessage = []
+            #loop to Encrypt the message and put in List of Messages
+            for x in notEncryptedText:
+                encryptedMessage.append(self.fastExpo_rec(ord(x), self.e, self.n)) 
+
+            List_Of_Messages.append(encryptedMessage)
+
+            print("Message encrypted and sent.")
+
+
+       
+        if E_Or_D == False:
+            print("The following messages are available:")
+            for x in range(len(List_Of_Messages)):
+                print(str(x+1) + ". (length = " + str(len(List_Of_Messages[x])) + ")")
+            userSelection = int(input("Enter your choice: "))
+            print("")
+            notEncryptedText = ""
+            for x in List_Of_Messages[userSelection-1]:
+                notEncryptedText += chr(self.fastExpo_rec(x, self.d,self.n))
+            print("Message: " + notEncryptedText)
+            print("")
+            List_Of_Messages.pop(userSelection-1)
+
+        return List_Of_Messages
+
     def __init__(self):
         """Initializes the object and assigns the private/public key"""
         self.phi = self.generate_phi()
