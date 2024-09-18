@@ -15,6 +15,7 @@ RSA = RSAalgorithmsClass.my_class()
 
 #list to hold all of the encrypted messages
 List_Of_Messages = []
+List_Of_Sig = []
 
 #This loop contains the User interface menu
 while True:
@@ -55,7 +56,16 @@ while True:
         
         #Authenticate a digital signature
         if userSelection == 2:
-            """stuff here"""
+            print("The following Signatures are available:")
+            for x in range(len(List_Of_Sig)):
+                print(str(x+1) + ". (length = " + str(len(List_Of_Sig[x])) + ")")
+            userSelection = int(input("Enter your choice: "))
+            print("")
+            notEncryptedText = ""
+            for x in List_Of_Sig[userSelection-1]:
+                notEncryptedText += chr(RSA.fastExpo_rec(x, RSA.e,RSA.n))
+            print("Decrypted Message: " + notEncryptedText)
+            print("")
 
         #Exit out of Public User Menu
         if userSelection == 3:
@@ -92,7 +102,17 @@ while True:
         
         #Digitally sign a message
         if userSelection == 2:
-            """do stuff here"""
+            notEncryptedText = input("Enter a message: ")
+            print("")
+            notEncryptedText = notEncryptedText.upper()
+        
+            #loop to Sign the message and put in List of Signatures
+            for x in notEncryptedText:
+                encryptedMessage.append(RSA.fastExpo_rec(ord(x), RSA.d, RSA.n)) 
+
+            List_Of_Sig.append(encryptedMessage)
+
+            print("Message Signed and sent.")
 
         #Shop the keys
         if userSelection == 3:
