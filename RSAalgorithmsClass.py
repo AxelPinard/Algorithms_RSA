@@ -118,6 +118,35 @@ class my_class():
 
         return List_Of_Messages
 
+    def Signature(self, List_Of_Sig, S_Or_A):
+
+        if S_Or_A == True:
+            print("The following Signatures are available:")
+            for x in range(len(List_Of_Sig)):
+                print(str(x+1) + ". (length = " + str(len(List_Of_Sig[x])) + ")")
+            userSelection = int(input("Enter your choice: "))
+            print("")
+            notEncryptedText = ""
+            for x in List_Of_Sig[userSelection-1]:
+                notEncryptedText += chr(self.fastExpo_rec(x, self.e,self.n))
+            print("Signature is valid")
+            print("")
+
+        if S_Or_A == False:
+            notEncryptedText = input("Enter a message: ")
+            print("")
+            notEncryptedText = notEncryptedText.upper()
+            encryptedMessage = []
+            #loop to Sign the message and put in List of Signatures
+            for x in notEncryptedText:
+                encryptedMessage.append(self.fastExpo_rec(ord(x), self.d, self.n)) 
+
+            List_Of_Sig.append(encryptedMessage)
+
+            print("Message Signed and sent.")
+
+        return List_Of_Sig
+
     def __init__(self):
         """Initializes the object and assigns the private/public key"""
         self.phi = self.generate_phi()

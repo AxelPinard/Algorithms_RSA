@@ -49,16 +49,8 @@ while True:
         
         #Authenticate a digital signature
         if userSelection == 2:
-            print("The following Signatures are available:")
-            for x in range(len(List_Of_Sig)):
-                print(str(x+1) + ". (length = " + str(len(List_Of_Sig[x])) + ")")
-            userSelection = int(input("Enter your choice: "))
-            print("")
-            notEncryptedText = ""
-            for x in List_Of_Sig[userSelection-1]:
-                notEncryptedText += chr(RSA.fastExpo_rec(x, RSA.e,RSA.n))
-            print("Signature is valid")
-            print("")
+            SignatureBool = True
+            List_Of_Sig = RSA.Signature(List_Of_Sig, SignatureBool)
 
         #Exit out of Public User Menu
         if userSelection == 3:
@@ -87,19 +79,10 @@ while True:
         
         #Digitally sign a message
         if userSelection == 2:
-            notEncryptedText = input("Enter a message: ")
-            print("")
-            notEncryptedText = notEncryptedText.upper()
-        
-            #loop to Sign the message and put in List of Signatures
-            for x in notEncryptedText:
-                encryptedMessage.append(RSA.fastExpo_rec(ord(x), RSA.d, RSA.n)) 
+            SignatureBool = False
+            List_Of_Sig = RSA.Signature(List_Of_Sig, SignatureBool)
 
-            List_Of_Sig.append(encryptedMessage)
-
-            print("Message Signed and sent.")
-
-        #Shop the keys
+        #Show the keys
         if userSelection == 3:
             print("Public key: " + str(RSA.e))
             print("Private key: " + str(RSA.d))
@@ -119,5 +102,6 @@ while True:
         #reset userSelection
         userSelection = 2
 
+    #Break out of program
     if userSelection == 3:
         break
