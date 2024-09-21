@@ -131,12 +131,16 @@ def decrypt_message(encrypted_message, d, n):
     """Decrypts a message using the private key."""
     decrypted_message = ''
     for char in encrypted_message:
-        # Decrypt char using private key and n
-        decrypted_char_value = fast_expo_rec(char, d, n)
-        # Convert decrypted value to char
-        decrypted_char = chr(decrypted_char_value)
-        # Append char to message
-        decrypted_message += decrypted_char
+        try:
+            # Decrypt char using private key and n
+            decrypted_char_value = fast_expo_rec(char, d, n)
+            # Convert decrypted value to char
+            decrypted_char = chr(decrypted_char_value)
+            # Append char to message
+            decrypted_message += decrypted_char
+        # Throw an exception for invalid key
+        except Exception as error:
+            raise ValueError("\nDecryption failed! Invalid key.\n")
     return decrypted_message
 
 # Digitally signs message
@@ -150,7 +154,7 @@ def sign_message(message, d, n):
         encrypted_char = fast_expo_rec(char_value, d, n)
         # Append to signature
         encrypted_signature.append(encrypted_char)
-    print("Message signed and sent.")
+    print("Message signed and sent.\n")
     return encrypted_signature
 
 # Authenticate Digital Signature
@@ -220,14 +224,19 @@ def main():
                         for i, signature in enumerate(list_of_signatures):
                             print(f"{i + 1}. {signature}")
                         user_selection = int(input("Enter your choice: "))
-                        is_authentic = authenticate_signature(
-                            list_of_signatures[user_selection - 1],
-                            list_of_encrypted_signatures[user_selection - 1], 
-                            e, n)
-                        if is_authentic:
-                            print("Signature is valid.\n")
-                        else:
-                            print("ERROR: Signature is invalid!\n")
+                        try:
+                            
+                            is_authentic = authenticate_signature(
+                                list_of_signatures[user_selection - 1],
+                                list_of_encrypted_signatures[user_selection - 1], 
+                                e, n)
+                            if is_authentic:
+                                print("Signature is valid.\n")
+                            else:
+                                print("ERROR: Signature is invalid!\n")
+                        # Throw an exception for invalid key
+                        except ValueError as error:
+                            print("\nAuthentication failed! Invalid keys or signature.\n")
                     else:
                         print("No signatures found.\n")
                 
@@ -253,8 +262,12 @@ def main():
                     for i, msg in enumerate(list_of_encrypted_messages):
                         print(f"{i + 1}. (length = {len(msg)})")
                     user_selection = int(input("Enter the number of the message to decrypt: "))
-                    decrypted_message = decrypt_message(list_of_encrypted_messages[user_selection - 1], d, n)
-                    print(f"Decrypted Message: {decrypted_message}\n")
+                    try:
+                        decrypted_message = decrypt_message(list_of_encrypted_messages[user_selection - 1], d, n)
+                        print(f"Decrypted Message: {decrypted_message}\n")
+                    # Print exception message if keys are invalid
+                    except ValueError as error:
+                        print(error)
                 
                 # Sign message
                 elif user_selection == 2:
