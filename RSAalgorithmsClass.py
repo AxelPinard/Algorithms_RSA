@@ -2,7 +2,9 @@ import random
 
 class my_class():
     """class"""
-
+    ## list to store n
+    n_List = []
+    
     def gcd(self,a=1, b=1):
         """Returns the greatest common divisor of a and b.(Euclid's algorithm)"""
         if b == 0:
@@ -58,6 +60,12 @@ class my_class():
         self.n = p * q
         return phi
     
+    ## a necessary eviiiil
+    def generate_n(self):
+        n = self.n
+        return n
+    
+    
     def generate_public_key(self,phi):
         """Generates public key e"""
         if phi <= 1:
@@ -87,69 +95,81 @@ class my_class():
             t = self.fastExpo_rec(c, d//2, n)
             return c * (t**2%n) % n
 
-    def encrypt_decrypt(self,List_Of_Messages, E_Or_D):
-        if E_Or_D == True:
-            notEncryptedText = input("Enter a message: ")
-            print("")
-            notEncryptedText = notEncryptedText.upper()
-            encryptedMessage = []
-            #loop to Encrypt the message and put in List of Messages
-            for x in notEncryptedText:
-                encryptedMessage.append(self.fastExpo_rec(ord(x), self.e, self.n)) 
 
-            List_Of_Messages.append(encryptedMessage)
+    def encrypt_Message(self):
+        notEncryptedText = input("Enter a message: ")
+        print("")
+        ## makes the message upperCase
+        notEncryptedText = notEncryptedText.upper()
+        encryptedMessage = []
+        
+        #loop to Encrypt the message and put into encryptedMessage list
+        for x in notEncryptedText:
+            encryptedMessage.append(self.fastExpo_rec(ord(x), self.e, self.n)) 
+            
+        print("Message encrypted and sent.")
+        print("")
+        
+        return encryptedMessage
+        
+    
+    
+    
+    ## DO NOT TOUCH THIS, IT IS FRAGILE
+    def decrypt_Message(self, list_Of_Encrypted_Messages, privateKeyList, n_List):
+        print("The following messages are available:")
+        
+        ## Prints what messages are available in the list
+        for x in range(len(list_Of_Encrypted_Messages)):
+            print(str(x + 1) + ". (length = " + str(len(list_Of_Encrypted_Messages[x])) + ")")
+            
+        userSelection = int(input("Enter your choice: "))
+        print("")  
+        
+        decryptedMessage = ""
+        ## loops through the encrypted message selected by the user, decrypts,
+        ## and prints the message.
+        for x in list_Of_Encrypted_Messages[userSelection - 1]:
+            decryptedMessage += chr(int(self.fastExpo_rec(x, privateKeyList[userSelection - 1], n_List[userSelection - 1])))
+            
+        ## return the decrypted message as a string to be appended to the list 
+        return decryptedMessage
+        #######################################################################
 
-            print("Message encrypted and sent.")
-
-
-       
-        if E_Or_D == False:
-            print("The following messages are available:")
-            for x in range(len(List_Of_Messages)):
-                print(str(x+1) + ". (length = " + str(len(List_Of_Messages[x])) + ")")
-            userSelection = int(input("Enter your choice: "))
-            print("")
-            notEncryptedText = ""
-            for x in List_Of_Messages[userSelection-1]:
-                notEncryptedText += chr(self.fastExpo_rec(x, self.d,self.n))
-            print("Message: " + notEncryptedText)
-            print("")
-            List_Of_Messages.pop(userSelection-1)
-
-        return List_Of_Messages
-
-    def Signature(self, List_Of_Sig, S_Or_A):
-
-        if S_Or_A == True:
-            print("The following Signatures are available:")
-            for x in range(len(List_Of_Sig)):
-                print(str(x+1) + ". (length = " + str(len(List_Of_Sig[x])) + ")")
-            userSelection = int(input("Enter your choice: "))
-            print("")
-            notEncryptedText = ""
-            for x in List_Of_Sig[userSelection-1]:
-                notEncryptedText += chr(self.fastExpo_rec(x, self.e,self.n))
-            print("Signature is valid")
-            print("")
-
-        if S_Or_A == False:
-            notEncryptedText = input("Enter a message: ")
-            print("")
-            notEncryptedText = notEncryptedText.upper()
-            encryptedMessage = []
-            #loop to Sign the message and put in List of Signatures
-            for x in notEncryptedText:
-                encryptedMessage.append(self.fastExpo_rec(ord(x), self.d, self.n)) 
-
-            List_Of_Sig.append(encryptedMessage)
-
-            print("Message Signed and sent.")
-
-        return List_Of_Sig
+    def sign_Message(self, signature):  ## Digitally sign or Authenticate
+        ## private key owner creating signature to authenticate by public user
+        encrypted_signature = []
+        #loop to Encrypt the message and return the encrypted signature list
+        for x in signature:
+                encrypted_signature.append(self.fastExpo_rec(ord(x), self.d, self.n))
+            
+        print("Message signed and sent.")
+        print("")
+        return encrypted_signature
+        
+    
+        #######################################################################
+    def auth_Signature(self, list_Of_SigToCompare, list_Of_Encrypted_Signatures, list_Of_AuthKeys, list_Of_Sign_n):
+        print("The following messages are available: ")
+        ## loop to display what signatures are available for verification
+        for x in range(len(list_Of_Encrypted_Signatures)):
+            print(str(x + 1) + ". " + str(list_Of_SigToCompare[x]))
+        userSelection = int(input("Enter your choice: "))
+        print("")
+        
+        decryptedSignature = ""
+        ## loop through the encrypted signature selected by the user and decrypts it
+        ## IF YOU GENERATE NEW KEYS AS A PRIVATE USER, THEN TRY TO DECRYPT A NEW SIGNATURE AS A PUBLIC USER, THE PROGRAM CRASHES
+        ## this is because of the value created from a new key not being a valid parameter inside of the chr function below.
+        for x in list_Of_Encrypted_Signatures[userSelection - 1]:
+            decryptedSignature += chr(int(self.fastExpo_rec(x, list_Of_AuthKeys[userSelection - 1], list_Of_Sign_n[userSelection - 1])))
+        ## return the decrypted signature
+        return decryptedSignature
 
     def __init__(self):
         """Initializes the object and assigns the private/public key"""
         self.phi = self.generate_phi()
         self.e = self.generate_public_key(self.phi)
         self.d = self.generate_private_key(self.e, self.phi)
+        self.n = self.generate_n()
    
